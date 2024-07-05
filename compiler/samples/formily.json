@@ -1,0 +1,60 @@
+{
+    "form": {
+      "labelCol": 6,
+      "wrapperCol": 12
+    },
+    "schema": {
+      "type": "object",
+      "properties": {
+        "cpc4khronfr": {
+          "type": "string",
+          "title": "Name",
+          "x-decorator": "FormItem",
+          "x-component": "Input",
+          "x-validator": [],
+          "x-component-props": {},
+          "x-decorator-props": {},
+          "x-designable-id": "cpc4khronfr",
+          "x-index": 0,
+          "description": "Please enter your name"
+        },
+        "d88degv02lr": {
+          "type": "string",
+          "title": "Father Name",
+          "x-decorator": "FormItem",
+          "x-component": "Input",
+          "x-validator": [],
+          "x-component-props": {},
+          "x-decorator-props": {},
+          "x-designable-id": "d88degv02lr",
+          "x-index": 1,
+          "description": "Please enter your father's name"
+        },
+        "Class": {
+          "title": "Class",
+          "x-decorator": "FormItem",
+          "x-component": "Select",
+          "x-validator": [],
+          "x-component-props": {},
+          "x-decorator-props": {},
+          "name": "Class",
+          "description": "Class in which the student is studying right now",
+          "enum": [
+            {
+              "children": [],
+              "label": "Class-1-key",
+              "value": "Class-1"
+            },
+            {
+              "children": [],
+              "label": "Class-2-key",
+              "value": "Class 2"
+            }
+          ],
+          "x-designable-id": "e8yllu5tlzm",
+          "x-index": 2
+        }
+      },
+      "x-designable-id": "la2srbqiuxw"
+    }
+  }

@@ -1,0 +1,142 @@
+{
+    "nodes": [
+      {
+        "id": "start",
+        "position": {
+          "x": 999.6555388293766,
+          "y": -39.95303546469871
+        },
+        "type": "customNode",
+        "data": {
+          "label": "Start",
+          "category": "Miscellaneous",
+          "name": "start",
+          "type": "Output",
+          "description": "Start pointer Points to node  ",
+          "baseClasses": [
+            "xMessage"
+          ],
+          "inputs": {},
+          "outputs": {
+            "startPointer": ""
+          },
+          "inputAnchors": [],
+          "inputParams": [],
+          "outputAnchors": [
+            {
+              "id": "start-output-startPointer-xMessage",
+              "name": "startPointer",
+              "label": "start Pointer",
+              "type": "xMessage"
+            }
+          ],
+          "id": "start",
+          "selected": false
+        },
+        "width": 300,
+        "height": 113,
+        "selected": false,
+        "positionAbsolute": {
+          "x": 999.6555388293766,
+          "y": -39.95303546469871
+        },
+        "dragging": false
+      },
+      {
+        "id": "CODE_RUNNER",
+        "position": {
+          "x": 1366.3861516116979,
+          "y": -232.2293201067579
+        },
+        "type": "customNode",
+        "data": {
+          "label": "Code Runner Transformer",
+          "name": "CODE_RUNNER",
+          "type": "Output",
+          "category": "GenericTransformer",
+          "description": "A code runner capable of running custom JS code.",
+          "baseClasses": [
+            "xMessage"
+          ],
+          "inputs": {
+            "xmessage": [
+              "start.data.instance"
+            ],
+            "code": "const msg = JSON.parse($0);\n\nreturn JSON.stringify(msg);"
+          },
+          "outputs": {
+            "onSuccess": "",
+            "onError": ""
+          },
+          "inputAnchors": [
+            {
+              "label": "XMessage",
+              "name": "xmessage",
+              "type": "xMessage",
+              "list": true,
+              "id": "CODE_RUNNER-input-xmessage-xMessage"
+            }
+          ],
+          "inputParams": [
+            {
+              "label": "Code",
+              "name": "code",
+              "type": "ide",
+              "rows": 2,
+              "id": "CODE_RUNNER-input-code-ide"
+            },
+            {
+              "id": "CODE_RUNNER-input-sideEffects-json",
+              "label": "SideEffects",
+              "name": "sideEffects",
+              "rows": 2,
+              "type": "json"
+            }
+          ],
+          "outputAnchors": [
+            {
+              "id": "CODE_RUNNER-output-onSuccess-xMessage",
+              "name": "onSuccess",
+              "label": "On Success",
+              "type": "xMessage"
+            },
+            {
+              "id": "CODE_RUNNER-output-onError-xMessage",
+              "name": "onError",
+              "label": "On Error",
+              "type": "xMessage"
+            }
+          ],
+          "id": "CODE_RUNNER",
+          "selected": false
+        },
+        "width": 300,
+        "height": 569,
+        "selected": true,
+        "positionAbsolute": {
+          "x": 1366.3861516116979,
+          "y": -232.2293201067579
+        },
+        "dragging": false
+      }
+    ],
+    "edges": [
+      {
+        "source": "start",
+        "sourceHandle": "start-output-startPointer-xMessage",
+        "target": "CODE_RUNNER",
+        "targetHandle": "CODE_RUNNER-input-xmessage-xMessage",
+        "type": "buttonedge",
+        "id": "start-start-output-startPointer-xMessage-CODE_RUNNER-CODE_RUNNER-input-xmessage-xMessage",
+        "data": {
+          "label": ""
+        }
+      }
+    ],
+    "viewport": {
+      "x": -615.6948033561066,
+      "y": 329.69035399114864,
+      "zoom": 0.9999999999999991
+    },
+    "name": ""
+  }
