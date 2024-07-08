@@ -1,8 +1,4 @@
-// CODE RUNNER : code -> needs '\n' at the end of each line.
-// const msg = JSON.parse($0);
-// msg.transformer.metaData.formInput = {"Name": msg.payload.text};
-// msg.payload.text = "Please enter your father's name";
-// return JSON.stringify(msg);
+// const fs = require('fs');
 
 // START NODE
 const startNode = {
@@ -49,7 +45,34 @@ const startNode = {
         "style": {}
       };
 
-//
+
+class FlowiseCode{
+  static msg_init = "const msg = JSON.parse($0);\n";
+  static msg_end = "return JSON.stringify(msg);";
+
+  // INPUT FIELD CODE
+  static Input(fieldDetail, index) {
+    const title = fieldDetail['title'];
+    const description = fieldDetail['description'];
+
+    let code = "";
+    // If not the first field, then take prev input and store it in formInputs
+    if(index != 0){
+      code += `msg.transformer.metaData.formInputs = {\n"${title}": msg.payload.text\n};\n`
+    }
+    // Ask the next question
+    code += `msg.payload.text = "${description}";\n`
+    return FlowiseCode.msg_init+code+FlowiseCode.msg_end;
+  }
+
+  // SELECT FIELD CODE
+  static Select(fieldDetail) {}
+
+  // TEXTAREA FIELD CODE
+  static TextArea(fieldDetail) {}
+}
+
+// Field Parsers
 class FieldParsers {
   // INPUT FIELD PARSER
   static Input(fieldDetail) {
@@ -63,11 +86,6 @@ class FieldParsers {
   // SELECT FIELD PARSER
   static Select(fieldDetail) {
     // TODO: Implement Select
-  }
-
-  // PASSWORD FIELD PARSER
-  static Password(fieldDetail) {
-    // TODO: Implement Password
   }
 
   // TEXTAREA FIELD PARSER
@@ -143,14 +161,28 @@ class Flowise {
   }
 
   codeRunnerNode(field, id, index){
-    // TODO: 'code' needs to be generated based on the field
-    const code = `
-    const msg = JSON.parse($0);
-    ${index != 0 && 'msg.transformer.metaData.formInput = {"${field.title}": msg.payload.text};'}
-    msg.payload.text = "${field.description}";
-    return JSON.stringify(msg);
-    `;
+    
+    const component = field['component'];
+    
+    const code = FlowiseCode.Input(field, index);
+    // TODO : Generate code based on component [it needs the previous component type, to take its input]
 
+    // let code = "";
+    // switch (component) {
+    //   case "Input":
+    //     code += FlowiseCode.Input(field, index);
+    //     break;
+    //   case "Select":
+    //     // TODO: Implement Select
+    //     break;
+    //   case "Password":
+    //     // TODO: Implement Password
+    //     break;
+    //   case "TextArea":
+    //     // TODO: Implement TextArea
+    //     break;
+    // }
+    
     const node = {
       "id": `CODE_RUNNER_${id}`,
       "data": {
@@ -324,7 +356,6 @@ class Flowise {
 const INPUT_FIELD_TYPES = {
   INPUT: "Input",
   SELECT: "Select",
-  PASSWORD: "Password",
   TEXTAREA: "Input.TextArea",
 }
 
@@ -339,9 +370,6 @@ const parseFormilyInputFieldDetails = (fieldDetail) => {
       break;
     case INPUT_FIELD_TYPES.SELECT:
       // TODO: Implement Select
-      break;
-    case INPUT_FIELD_TYPES.PASSWORD:
-      // TODO: Implement Password
       break;
     case INPUT_FIELD_TYPES.TEXTAREA:
       // TODO: Implement TextArea
@@ -366,12 +394,24 @@ const parseFormilyJSON = (properties) => {
   return fieldDetails;
 }
 
-export default function formily_flowise_compiler(formilyJSON) {
+function formily_flowise_compiler(formilyJSON) {
 
-  // Parsing formilyJSON -> Array of {component, description}
+  // Parsing formilyJSON -> Array of {title, component, description}
   const fieldDetails = parseFormilyJSON(formilyJSON.schema.properties);
 
   const flowiseJSON = new Flowise(fieldDetails);
 
   return flowiseJSON.toJSON();
+
+  // This was for testing
+
+  // fs.writeFileSync('./flowise.json', JSON.stringify(json, null, 2));
 }
+
+// This was for testing
+
+// const formily = fs.readFileSync('./samples/formily2.json');
+// formily_flowise_compiler(JSON.parse(formily));
+
+
+module.exports = formily_flowise_compiler;
