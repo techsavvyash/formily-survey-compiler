@@ -45,28 +45,42 @@ const startNode = {
         "style": {}
       };
 
+const INPUT_FIELD_TYPES = {
+  INPUT: "Input",
+  SELECT: "Select",
+  TEXTAREA: "Input.TextArea",
+}
 
 class FlowiseCode{
   static msg_init = "const msg = JSON.parse($0);\n";
   static msg_end = "return JSON.stringify(msg);";
 
-  // INPUT FIELD CODE
-  static Input(fieldDetail, index) {
-    const title = fieldDetail['title'];
-    const description = fieldDetail['description'];
+  // ASK QUESTION CODE
+  static AskQuestion(description){
+    return `msg.payload.text = "${description}";\n`
+  }
 
-    let code = "";
-    // If not the first field, then take prev input and store it in formInputs
-    if(index != 0){
-      code += `msg.transformer.metaData.formInputs = {\n"${title}": msg.payload.text\n};\n`
-    }
-    // Ask the next question
-    code += `msg.payload.text = "${description}";\n`
-    return FlowiseCode.msg_init+code+FlowiseCode.msg_end;
+  // GET INPUT CODE
+  static GetInput(title){
+    return `msg.transformer.metaData.formInpouts["${title}"] = msg.payload.text;\n`
+  }
+
+  // INPUT FIELD CODE
+  static Input(fieldDetail) {
+    return this.AskQuestion(fieldDetail['description']);
   }
 
   // SELECT FIELD CODE
-  static Select(fieldDetail) {}
+  static Select(fieldDetail) {
+    const ask = this.AskQuestion(fieldDetail['description']);
+    const buttonChoices = "msg.payload.buttonChoices =";
+    const optionsJSON = JSON.stringify({
+      header: fieldDetail['description'],
+      choices: fieldDetail['options'],
+    });
+    const options = `JSON.parse('${optionsJSON}');\n`;
+    return ask + buttonChoices + options;
+  }
 
   // TEXTAREA FIELD CODE
   static TextArea(fieldDetail) {}
@@ -85,7 +99,18 @@ class FieldParsers {
 
   // SELECT FIELD PARSER
   static Select(fieldDetail) {
-    // TODO: Implement Select
+    return {
+      title: fieldDetail['title'],
+      component: "Select",
+      description: fieldDetail['description'],
+      options: fieldDetail['enum'].map((option, index) => {
+          return ({
+            key: option['label'],
+            text: option['value'],
+            isEnabled: true,
+          })
+        }),
+    }
   }
 
   // TEXTAREA FIELD PARSER
@@ -117,14 +142,16 @@ class Flowise {
 
   createGraph() {
     // Start Node was already created
+    const fields = this.fields;
+    // console.log("All Fields: ", fields);
 
     // Create Code Runner and User Feedback Loop Nodes for each field
-    const fields = this.fields;
     fields.forEach((field, index) => {
-      const id = `FIELD${index}`;
+      const id = `FIELD_${index}`;
+      const prevField = index != 0 ? fields[index-1] : null;
 
       // Create Code Runner Node
-      const codeRunnerNODE = this.codeRunnerNode(field, id, index);
+      const codeRunnerNODE = this.codeRunnerNode(prevField, field, id, index);
 
       // Create Edge
       const prevNode = this.nodes.slice(-1)[0];
@@ -146,7 +173,8 @@ class Flowise {
     });
 
     // Create Last Node
-    const lastNode = this.codeRunnerNode({
+    const prevField = fields.slice(-1)[0];
+    const lastNode = this.codeRunnerNode(prevField,{
       title: "Thank You!",
       description: "Thank You!",
     }, `END_${fields.length}`, fields.length);
@@ -160,28 +188,34 @@ class Flowise {
     this.edges.push(edge);
   }
 
-  codeRunnerNode(field, id, index){
-    
-    const component = field['component'];
-    
-    const code = FlowiseCode.Input(field, index);
-    // TODO : Generate code based on component [it needs the previous component type, to take its input]
+  codeRunnerNode(prevField, field, id, index){
+    // console.log("Prev: ",prevField);
+    // console.log("Field: ",field);
+    // console.log("ID: ",id);
+    // console.log("Index: ",index);
 
-    // let code = "";
-    // switch (component) {
-    //   case "Input":
-    //     code += FlowiseCode.Input(field, index);
-    //     break;
-    //   case "Select":
-    //     // TODO: Implement Select
-    //     break;
-    //   case "Password":
-    //     // TODO: Implement Password
-    //     break;
-    //   case "TextArea":
-    //     // TODO: Implement TextArea
-    //     break;
-    // }
+    const component = field['component'];
+    let code = FlowiseCode.msg_init;
+
+    // Take input from previous field and store it in formInputs (if index != 0)
+    if(index != 0){
+      code += FlowiseCode.GetInput(prevField['title']);
+    }
+    // ASK NEXT QUESTION: set payload for the current field (description) handle different components differently
+    switch (component) {
+      case INPUT_FIELD_TYPES.INPUT:
+        code += FlowiseCode.Input(field);
+        break;
+      case INPUT_FIELD_TYPES.SELECT:
+        code += FlowiseCode.Select(field);
+        break;
+      case INPUT_FIELD_TYPES.TEXTAREA:
+        // TODO: Implement TextArea
+        break;
+    }
+
+    // If last field, then return the msg
+    code += FlowiseCode.msg_end;
     
     const node = {
       "id": `CODE_RUNNER_${id}`,
@@ -353,11 +387,6 @@ class Flowise {
 }
 
 // INPUT FIELD TYPES: ENUM (properties.[id]['x-component'] from formily)
-const INPUT_FIELD_TYPES = {
-  INPUT: "Input",
-  SELECT: "Select",
-  TEXTAREA: "Input.TextArea",
-}
 
 // Formily Input Field Details Parser
 const parseFormilyInputFieldDetails = (fieldDetail) => {

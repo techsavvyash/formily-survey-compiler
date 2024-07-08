@@ -44,9 +44,9 @@
       "style": {}
     },
     {
-      "id": "CODE_RUNNER_FIELD0",
+      "id": "CODE_RUNNER_FIELD_0",
       "data": {
-        "id": "CODE_RUNNER_FIELD0",
+        "id": "CODE_RUNNER_FIELD_0",
         "name": "CODE_RUNNER",
         "type": "Output",
         "label": "Code Runner Transformer",
@@ -69,14 +69,14 @@
         "description": "A code runner capable of running custom JS code.",
         "inputParams": [
           {
-            "id": "CODE_RUNNER_FIELD0-input-code-ide",
+            "id": "CODE_RUNNER_FIELD_0-input-code-ide",
             "name": "code",
             "rows": 2,
             "type": "ide",
             "label": "Code"
           },
           {
-            "id": "CODE_RUNNER_FIELD0-input-sideEffects-json",
+            "id": "CODE_RUNNER_FIELD_0-input-sideEffects-json",
             "name": "sideEffects",
             "rows": 2,
             "type": "json",
@@ -85,7 +85,7 @@
         ],
         "inputAnchors": [
           {
-            "id": "CODE_RUNNER_FIELD0-input-xmessage-xMessage",
+            "id": "CODE_RUNNER_FIELD_0-input-xmessage-xMessage",
             "list": true,
             "name": "xmessage",
             "type": "xMessage",
@@ -94,13 +94,13 @@
         ],
         "outputAnchors": [
           {
-            "id": "CODE_RUNNER_FIELD0-output-onSuccess-xMessage",
+            "id": "CODE_RUNNER_FIELD_0-output-onSuccess-xMessage",
             "name": "onSuccess",
             "type": "xMessage",
             "label": "On Success"
           },
           {
-            "id": "CODE_RUNNER_FIELD0-output-onError-xMessage",
+            "id": "CODE_RUNNER_FIELD_0-output-onError-xMessage",
             "name": "onError",
             "type": "xMessage",
             "label": "On Error"
@@ -123,15 +123,15 @@
       "style": {}
     },
     {
-      "id": "USER_FEEDBACK_LOOP_FIELD0",
+      "id": "USER_FEEDBACK_LOOP_FIELD_0",
       "data": {
-        "id": "USER_FEEDBACK_LOOP_FIELD0",
+        "id": "USER_FEEDBACK_LOOP_FIELD_0",
         "name": "USER_FEEDBACK_LOOP",
         "type": "Output",
         "label": "User Feedback Loop",
         "inputs": {
           "xmessage": [
-            "CODE_RUNNER_FIELD0.data.instance"
+            "CODE_RUNNER_FIELD_0.data.instance"
           ]
         },
         "outputs": {
@@ -145,7 +145,7 @@
         "description": "User Feedback Loop",
         "inputParams": [
           {
-            "id": "USER_FEEDBACK_LOOP_FIELD0-input-sideEffects-json",
+            "id": "USER_FEEDBACK_LOOP_FIELD_0-input-sideEffects-json",
             "name": "sideEffects",
             "rows": 2,
             "type": "json",
@@ -154,7 +154,7 @@
         ],
         "inputAnchors": [
           {
-            "id": "USER_FEEDBACK_LOOP_FIELD0-input-xmessage-xMessage",
+            "id": "USER_FEEDBACK_LOOP_FIELD_0-input-xmessage-xMessage",
             "list": true,
             "name": "xmessage",
             "type": "xMessage",
@@ -193,7 +193,7 @@
         "type": "Output",
         "label": "Code Runner Transformer",
         "inputs": {
-          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData.formInputs = {\n\"Thank You!\": msg.payload.text\n};\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
+          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData.formInpouts[\"Hello\"] = msg.payload.text;\nreturn JSON.stringify(msg);",
           "xmessage": [
             "USER_FEEDBACK_LOOP_FIELD0.data.instance",
             false
@@ -267,34 +267,34 @@
   ],
   "edges": [
     {
-      "id": "start-CODE_RUNNER_FIELD0",
+      "id": "start-CODE_RUNNER_FIELD_0",
       "data": {
         "label": ""
       },
       "type": "buttonedge",
       "source": "start",
-      "target": "CODE_RUNNER_FIELD0",
+      "target": "CODE_RUNNER_FIELD_0",
       "sourceHandle": "start-output-startPointer-xMessage",
-      "targetHandle": "CODE_RUNNER_FIELD0-input-xmessage-xMessage"
+      "targetHandle": "CODE_RUNNER_FIELD_0-input-xmessage-xMessage"
     },
     {
-      "id": "CODE_RUNNER_FIELD0-USER_FEEDBACK_LOOP_FIELD0",
+      "id": "CODE_RUNNER_FIELD_0-USER_FEEDBACK_LOOP_FIELD_0",
       "data": {
         "label": ""
       },
       "type": "buttonedge",
-      "source": "CODE_RUNNER_FIELD0",
-      "target": "USER_FEEDBACK_LOOP_FIELD0",
-      "sourceHandle": "CODE_RUNNER_FIELD0-output-onSuccess-xMessage",
-      "targetHandle": "USER_FEEDBACK_LOOP_FIELD0-input-xmessage-xMessage"
+      "source": "CODE_RUNNER_FIELD_0",
+      "target": "USER_FEEDBACK_LOOP_FIELD_0",
+      "sourceHandle": "CODE_RUNNER_FIELD_0-output-onSuccess-xMessage",
+      "targetHandle": "USER_FEEDBACK_LOOP_FIELD_0-input-xmessage-xMessage"
     },
     {
-      "id": "USER_FEEDBACK_LOOP_FIELD0-CODE_RUNNER_END_1",
+      "id": "USER_FEEDBACK_LOOP_FIELD_0-CODE_RUNNER_END_1",
       "data": {
         "label": ""
       },
       "type": "buttonedge",
-      "source": "USER_FEEDBACK_LOOP_FIELD0",
+      "source": "USER_FEEDBACK_LOOP_FIELD_0",
       "target": "CODE_RUNNER_END_1",
       "sourceHandle": "USER_FEEDBACK_LOOP_FIELD0-output-restoredState-xMessage",
       "targetHandle": "CODE_RUNNER_END_1-input-xmessage-xMessage"
