@@ -51,7 +51,7 @@
         "type": "Output",
         "label": "Code Runner Transformer",
         "inputs": {
-          "code": "const msg = JSON.parse($0);\nmsg.payload.text = \"Select Your Class\";\nmsg.payload.buttonChoices ={\"header\":\"Select Your Class\",\"choices\":[{\"key\":\"class-1-key\",\"text\":\"Class 1\",\"isEnabled\":true},{\"key\":\"class-2-key\",\"text\":\"Class 2\",\"isEnabled\":true}]};\nreturn JSON.stringify(msg);",
+          "code": "const msg = JSON.parse($0);\nmsg.payload.text = \"Select Your Class\";\nmsg.payload.buttonChoices ={\"header\":\"Select Your Class\",\"choices\":[{\"key\":\"class-1-key\",\"text\":\"Class 1\",\"isEnabled\":true,\"showTextInput\":true},{\"key\":\"class-2-key\",\"text\":\"Class 2\",\"isEnabled\":true,\"showTextInput\":true}]};\nreturn JSON.stringify(msg);",
           "xmessage": [
             "start.data.instance"
           ]
@@ -192,7 +192,7 @@
         "type": "Output",
         "label": "Code Runner Transformer",
         "inputs": {
-          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData[\"formInputs\"][\"Class\"] = msg.payload.text;\nmsg.payload.text = \"Select your Favourite Sport\";\nmsg.payload.buttonChoices ={\"header\":\"Select your Favourite Sport\",\"choices\":[{\"key\":\"s5ukwcjdl5q\",\"text\":\"Cricket\",\"isEnabled\":true},{\"key\":\"lwhu2kl7ska\",\"text\":\"Football\",\"isEnabled\":true}]};\nreturn JSON.stringify(msg);",
+          "code": "const msg = JSON.parse($0);\nlet formInput = msg.transformer.metaData.formInput;\nif(formInput){\nformInput = {...formInput, \"Class\": msg.payload.text};\n} else {\nformInput = {\"Class\": msg.payload.text};\n}\nmsg.transformer.metaData.formInput = formInput;\nmsg.payload.text = \"Select your Favourite Sport\";\nmsg.payload.buttonChoices ={\"header\":\"Select your Favourite Sport\",\"choices\":[{\"key\":\"s5ukwcjdl5q\",\"text\":\"Cricket\",\"isEnabled\":true,\"showTextInput\":true},{\"key\":\"lwhu2kl7ska\",\"text\":\"Football\",\"isEnabled\":true,\"showTextInput\":true}]};\nreturn JSON.stringify(msg);",
           "xmessage": [
             "start.data.instance",
             "USER_FEEDBACK_LOOP_FIELD_0.data.instance"
@@ -335,7 +335,7 @@
         "type": "Output",
         "label": "Code Runner Transformer",
         "inputs": {
-          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData[\"formInputs\"][\"Sport\"] = msg.payload.text;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
+          "code": "const msg = JSON.parse($0);\nlet formInput = msg.transformer.metaData.formInput;\nif(formInput){\nformInput = {...formInput, \"Sport\": msg.payload.text};\n} else {\nformInput = {\"Sport\": msg.payload.text};\n}\nmsg.transformer.metaData.formInput = formInput;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
           "xmessage": [
             "start.data.instance",
             "USER_FEEDBACK_LOOP_FIELD_0.data.instance",

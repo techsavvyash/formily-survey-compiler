@@ -60,7 +60,15 @@ class FlowiseCode{
 
   // GET INPUT CODE
   static GetInput(title){
-    return `msg.transformer.metaData["formInputs"]["${title}"] = msg.payload.text;\n`
+    const s1 =  `let formInput = msg.transformer.metaData.formInput;\n`;
+    const s2 = `if(formInput){\n`;
+    const s3 = `formInput = {...formInput, \"${title}\": msg.payload.text};\n`;
+    const s4 = `} else {\n`;
+    const s5 = `formInput = {\"${title}\": msg.payload.text};\n`;
+    const s6 = `}\n`;
+    const s7 = `msg.transformer.metaData.formInput = formInput;\n`;
+
+    return s1 + s2 + s3 + s4 + s5 + s6 + s7;
   }
 
   // INPUT FIELD CODE
