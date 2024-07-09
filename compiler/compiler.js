@@ -62,7 +62,7 @@ class FlowiseCode{
 
   // GET INPUT CODE
   static GetInput(title){
-    return `msg.transformer.metaData.formInpouts["${title}"] = msg.payload.text;\n`
+    return `msg.transformer.metaData.formInputs["${title}"] = msg.payload.text;\n`
   }
 
   // INPUT FIELD CODE
@@ -78,7 +78,7 @@ class FlowiseCode{
       header: fieldDetail['description'],
       choices: fieldDetail['options'],
     });
-    const options = `JSON.parse('${optionsJSON}');\n`;
+    const options = `${optionsJSON};\n`;
     return ask + buttonChoices + options;
   }
 
@@ -105,8 +105,8 @@ class FieldParsers {
       description: fieldDetail['description'],
       options: fieldDetail['enum'].map((option, index) => {
           return ({
-            key: option['label'],
-            text: option['value'],
+            key: option['value'],
+            text: option['label'],
             isEnabled: true,
           })
         }),
@@ -177,6 +177,7 @@ class Flowise {
     const lastNode = this.codeRunnerNode(prevField,{
       title: "Thank You!",
       description: "Thank You!",
+      component: "END"
     }, `END_${fields.length}`, fields.length);
 
     // Create Edge
@@ -212,6 +213,9 @@ class Flowise {
       case INPUT_FIELD_TYPES.TEXTAREA:
         // TODO: Implement TextArea
         break;
+      case "END":
+        code += FlowiseCode.AskQuestion("Thank You!");
+        break;
     }
 
     // If last field, then return the msg
@@ -227,8 +231,7 @@ class Flowise {
         "inputs": {
           "code": code,
           "xmessage": [
-            index != 0 && `USER_FEEDBACK_LOOP_FIELD${index-1}.data.instance`,
-            index == 0 && `start.data.instance`
+            index != 0 ? `USER_FEEDBACK_LOOP_FIELD${index-1}.data.instance` : `start.data.instance`
           ]
         },
         "outputs": {
@@ -311,14 +314,14 @@ class Flowise {
           "xmessage": [`CODE_RUNNER_${id}.data.instance`]
         },
         "outputs": {
-          "restoredState": "",
+          "restoreState": "",
         },
         "category": "StateRestoreTransformer",
           "selected": false,
           "baseClasses": [
             "xMessage"
           ],
-        "description": "User Feedback Loop",
+        "description": "A transformer which restores state to a specific node after sending a message to user.",
         "inputParams": [
           {
             "id": `USER_FEEDBACK_LOOP_${id}-input-sideEffects-json`,
@@ -340,9 +343,9 @@ class Flowise {
         "outputAnchors": [
           {
             "id": `USER_FEEDBACK_LOOP_FIELD${index}-output-restoredState-xMessage`,
-            "name": "onSuccess",
+            "name": "restoreState",
             "type": "xMessage",
-            "label": "On Success"
+            "label": "Restore State"
           }
         ]
       },
@@ -398,7 +401,7 @@ const parseFormilyInputFieldDetails = (fieldDetail) => {
       return FieldParsers.Input(fieldDetail);
       break;
     case INPUT_FIELD_TYPES.SELECT:
-      // TODO: Implement Select
+      return FieldParsers.Select(fieldDetail)
       break;
     case INPUT_FIELD_TYPES.TEXTAREA:
       // TODO: Implement TextArea

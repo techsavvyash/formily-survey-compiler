@@ -17,7 +17,13 @@ const flowise_select1 = formily_flowise_compiler(JSON.parse(formily_select1));
 fs.writeFileSync('./flowise/flowise_select1.json', JSON.stringify(flowise_select1, null, 2));
 
 // Test case 4 (SELECT FIELD | MULTIPLE)
+const formily_select2 = fs.readFileSync('./formily/formily_select2.json');
+const flowise_select2 = formily_flowise_compiler(JSON.parse(formily_select2));
+fs.writeFileSync('./flowise/flowise_select2.json', JSON.stringify(flowise_select2, null, 2));
 
 // Test case 5 (MIX)
+const formily_mix1 = fs.readFileSync('./formily/formily_mix1.json');
+const flowise_mix1 = formily_flowise_compiler(JSON.parse(formily_mix1));
+fs.writeFileSync('./flowise/flowise_mix1.json', JSON.stringify(flowise_mix1, null, 2));
 
 // Sapce separated field (SELECT, INPUT, mix)

@@ -51,7 +51,7 @@
         "type": "Output",
         "label": "Code Runner Transformer",
         "inputs": {
-          "code": "const msg = JSON.parse($0);\nmsg.payload.text = \"say Hello\";\nreturn JSON.stringify(msg);",
+          "code": "const msg = JSON.parse($0);\nmsg.payload.text = \"Select Your Class\";\nmsg.payload.buttonChoices ={\"header\":\"Select Your Class\",\"choices\":[{\"key\":\"class-1-key\",\"text\":\"Class 1\",\"isEnabled\":true},{\"key\":\"class-2-key\",\"text\":\"Class 2\",\"isEnabled\":true}]};\nreturn JSON.stringify(msg);",
           "xmessage": [
             "start.data.instance"
           ]
@@ -185,14 +185,14 @@
       "style": {}
     },
     {
-      "id": "CODE_RUNNER_END_1",
+      "id": "CODE_RUNNER_FIELD_1",
       "data": {
-        "id": "CODE_RUNNER_END_1",
+        "id": "CODE_RUNNER_FIELD_1",
         "name": "CODE_RUNNER",
         "type": "Output",
         "label": "Code Runner Transformer",
         "inputs": {
-          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData.formInputs[\"Hello\"] = msg.payload.text;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
+          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData.formInputs[\"Class\"] = msg.payload.text;\nmsg.payload.text = \"Select your Favourite Sport\";\nmsg.payload.buttonChoices ={\"header\":\"Select your Favourite Sport\",\"choices\":[{\"key\":\"s5ukwcjdl5q\",\"text\":\"Cricket\",\"isEnabled\":true},{\"key\":\"lwhu2kl7ska\",\"text\":\"Football\",\"isEnabled\":true}]};\nreturn JSON.stringify(msg);",
           "xmessage": [
             "USER_FEEDBACK_LOOP_FIELD0.data.instance"
           ]
@@ -209,14 +209,14 @@
         "description": "A code runner capable of running custom JS code.",
         "inputParams": [
           {
-            "id": "CODE_RUNNER_END_1-input-code-ide",
+            "id": "CODE_RUNNER_FIELD_1-input-code-ide",
             "name": "code",
             "rows": 2,
             "type": "ide",
             "label": "Code"
           },
           {
-            "id": "CODE_RUNNER_END_1-input-sideEffects-json",
+            "id": "CODE_RUNNER_FIELD_1-input-sideEffects-json",
             "name": "sideEffects",
             "rows": 2,
             "type": "json",
@@ -225,7 +225,7 @@
         ],
         "inputAnchors": [
           {
-            "id": "CODE_RUNNER_END_1-input-xmessage-xMessage",
+            "id": "CODE_RUNNER_FIELD_1-input-xmessage-xMessage",
             "list": true,
             "name": "xmessage",
             "type": "xMessage",
@@ -234,13 +234,154 @@
         ],
         "outputAnchors": [
           {
-            "id": "CODE_RUNNER_END_1-output-onSuccess-xMessage",
+            "id": "CODE_RUNNER_FIELD_1-output-onSuccess-xMessage",
             "name": "onSuccess",
             "type": "xMessage",
             "label": "On Success"
           },
           {
-            "id": "CODE_RUNNER_END_1-output-onError-xMessage",
+            "id": "CODE_RUNNER_FIELD_1-output-onError-xMessage",
+            "name": "onError",
+            "type": "xMessage",
+            "label": "On Error"
+          }
+        ]
+      },
+      "type": "customNode",
+      "width": 300,
+      "height": 569,
+      "dragging": false,
+      "position": {
+        "x": 3255.789032183661,
+        "y": -141.0959960862705
+      },
+      "selected": false,
+      "positionAbsolute": {
+        "x": 3255.789032183661,
+        "y": -141.0959960862705
+      },
+      "style": {}
+    },
+    {
+      "id": "USER_FEEDBACK_LOOP_FIELD_1",
+      "data": {
+        "id": "USER_FEEDBACK_LOOP_FIELD_1",
+        "name": "USER_FEEDBACK_LOOP",
+        "type": "Output",
+        "label": "User Feedback Loop",
+        "inputs": {
+          "xmessage": [
+            "CODE_RUNNER_FIELD_1.data.instance"
+          ]
+        },
+        "outputs": {
+          "restoreState": ""
+        },
+        "category": "StateRestoreTransformer",
+        "selected": false,
+        "baseClasses": [
+          "xMessage"
+        ],
+        "description": "A transformer which restores state to a specific node after sending a message to user.",
+        "inputParams": [
+          {
+            "id": "USER_FEEDBACK_LOOP_FIELD_1-input-sideEffects-json",
+            "name": "sideEffects",
+            "rows": 2,
+            "type": "json",
+            "label": "SideEffects"
+          }
+        ],
+        "inputAnchors": [
+          {
+            "id": "USER_FEEDBACK_LOOP_FIELD_1-input-xmessage-xMessage",
+            "list": true,
+            "name": "xmessage",
+            "type": "xMessage",
+            "label": "xMessage"
+          }
+        ],
+        "outputAnchors": [
+          {
+            "id": "USER_FEEDBACK_LOOP_FIELD1-output-restoredState-xMessage",
+            "name": "restoreState",
+            "type": "xMessage",
+            "label": "Restore State"
+          }
+        ]
+      },
+      "type": "customNode",
+      "width": 300,
+      "height": 569,
+      "dragging": false,
+      "position": {
+        "x": 3255.789032183661,
+        "y": -141.0959960862705
+      },
+      "selected": false,
+      "positionAbsolute": {
+        "x": 3255.789032183661,
+        "y": -141.0959960862705
+      },
+      "style": {}
+    },
+    {
+      "id": "CODE_RUNNER_END_2",
+      "data": {
+        "id": "CODE_RUNNER_END_2",
+        "name": "CODE_RUNNER",
+        "type": "Output",
+        "label": "Code Runner Transformer",
+        "inputs": {
+          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData.formInputs[\"Sport\"] = msg.payload.text;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
+          "xmessage": [
+            "USER_FEEDBACK_LOOP_FIELD1.data.instance"
+          ]
+        },
+        "outputs": {
+          "onError": "",
+          "onSuccess": ""
+        },
+        "category": "GenericTransformer",
+        "selected": false,
+        "baseClasses": [
+          "xMessage"
+        ],
+        "description": "A code runner capable of running custom JS code.",
+        "inputParams": [
+          {
+            "id": "CODE_RUNNER_END_2-input-code-ide",
+            "name": "code",
+            "rows": 2,
+            "type": "ide",
+            "label": "Code"
+          },
+          {
+            "id": "CODE_RUNNER_END_2-input-sideEffects-json",
+            "name": "sideEffects",
+            "rows": 2,
+            "type": "json",
+            "label": "SideEffects"
+          }
+        ],
+        "inputAnchors": [
+          {
+            "id": "CODE_RUNNER_END_2-input-xmessage-xMessage",
+            "list": true,
+            "name": "xmessage",
+            "type": "xMessage",
+            "label": "XMessage"
+          }
+        ],
+        "outputAnchors": [
+          {
+            "id": "CODE_RUNNER_END_2-output-onSuccess-xMessage",
+            "name": "onSuccess",
+            "type": "xMessage",
+            "label": "On Success"
+          },
+          {
+            "id": "CODE_RUNNER_END_2-output-onError-xMessage",
             "name": "onError",
             "type": "xMessage",
             "label": "On Error"
@@ -287,15 +428,37 @@
       "targetHandle": "USER_FEEDBACK_LOOP_FIELD_0-input-xmessage-xMessage"
     },
     {
-      "id": "USER_FEEDBACK_LOOP_FIELD_0-CODE_RUNNER_END_1",
+      "id": "USER_FEEDBACK_LOOP_FIELD_0-CODE_RUNNER_FIELD_1",
       "data": {
         "label": ""
       },
       "type": "buttonedge",
       "source": "USER_FEEDBACK_LOOP_FIELD_0",
-      "target": "CODE_RUNNER_END_1",
+      "target": "CODE_RUNNER_FIELD_1",
       "sourceHandle": "USER_FEEDBACK_LOOP_FIELD0-output-restoredState-xMessage",
-      "targetHandle": "CODE_RUNNER_END_1-input-xmessage-xMessage"
+      "targetHandle": "CODE_RUNNER_FIELD_1-input-xmessage-xMessage"
+    },
+    {
+      "id": "CODE_RUNNER_FIELD_1-USER_FEEDBACK_LOOP_FIELD_1",
+      "data": {
+        "label": ""
+      },
+      "type": "buttonedge",
+      "source": "CODE_RUNNER_FIELD_1",
+      "target": "USER_FEEDBACK_LOOP_FIELD_1",
+      "sourceHandle": "CODE_RUNNER_FIELD_1-output-onSuccess-xMessage",
+      "targetHandle": "USER_FEEDBACK_LOOP_FIELD_1-input-xmessage-xMessage"
+    },
+    {
+      "id": "USER_FEEDBACK_LOOP_FIELD_1-CODE_RUNNER_END_2",
+      "data": {
+        "label": ""
+      },
+      "type": "buttonedge",
+      "source": "USER_FEEDBACK_LOOP_FIELD_1",
+      "target": "CODE_RUNNER_END_2",
+      "sourceHandle": "USER_FEEDBACK_LOOP_FIELD1-output-restoredState-xMessage",
+      "targetHandle": "CODE_RUNNER_END_2-input-xmessage-xMessage"
     }
   ],
   "viewport": {
