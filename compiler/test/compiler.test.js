@@ -26,4 +26,7 @@ const formily_mix1 = fs.readFileSync('./formily/formily_mix1.json');
 const flowise_mix1 = formily_flowise_compiler(JSON.parse(formily_mix1));
 fs.writeFileSync('./flowise/flowise_mix1.json', JSON.stringify(flowise_mix1, null, 2));
 
-// Sapce separated field (SELECT, INPUT, mix)
+// Test Case 6 (Sapce separated TITLE)
+const formily_space = fs.readFileSync('./formily/formily_space.json');
+const flowise_space = formily_flowise_compiler(JSON.parse(formily_space));
+fs.writeFileSync('./flowise/flowise_space.json', JSON.stringify(flowise_space, null, 2));

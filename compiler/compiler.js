@@ -90,8 +90,9 @@ class FlowiseCode{
 class FieldParsers {
   // INPUT FIELD PARSER
   static Input(fieldDetail) {
+    const title = fieldDetail['title'].replace(/\s/g, '');
     return {
-      title: fieldDetail['title'],
+      title,
       component: "Input",
       description: fieldDetail['description'],
     }
@@ -99,8 +100,9 @@ class FieldParsers {
 
   // SELECT FIELD PARSER
   static Select(fieldDetail) {
+    const title = fieldDetail['title'].replace(/\s/g, '');
     return {
-      title: fieldDetail['title'],
+      title,
       component: "Select",
       description: fieldDetail['description'],
       options: fieldDetail['enum'].map((option, index) => {
