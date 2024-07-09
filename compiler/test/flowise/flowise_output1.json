@@ -53,7 +53,6 @@
         "inputs": {
           "code": "const msg = JSON.parse($0);\nmsg.payload.text = \"say Hello\";\nreturn JSON.stringify(msg);",
           "xmessage": [
-            false,
             "start.data.instance"
           ]
         },
@@ -135,14 +134,14 @@
           ]
         },
         "outputs": {
-          "restoredState": ""
+          "restoreState": ""
         },
         "category": "StateRestoreTransformer",
         "selected": false,
         "baseClasses": [
           "xMessage"
         ],
-        "description": "User Feedback Loop",
+        "description": "A transformer which restores state to a specific node after sending a message to user.",
         "inputParams": [
           {
             "id": "USER_FEEDBACK_LOOP_FIELD_0-input-sideEffects-json",
@@ -164,9 +163,9 @@
         "outputAnchors": [
           {
             "id": "USER_FEEDBACK_LOOP_FIELD0-output-restoredState-xMessage",
-            "name": "onSuccess",
+            "name": "restoreState",
             "type": "xMessage",
-            "label": "On Success"
+            "label": "Restore State"
           }
         ]
       },
@@ -193,10 +192,9 @@
         "type": "Output",
         "label": "Code Runner Transformer",
         "inputs": {
-          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData.formInpouts[\"Hello\"] = msg.payload.text;\nreturn JSON.stringify(msg);",
+          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData.formInpouts[\"Hello\"] = msg.payload.text;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
           "xmessage": [
-            "USER_FEEDBACK_LOOP_FIELD0.data.instance",
-            false
+            "USER_FEEDBACK_LOOP_FIELD0.data.instance"
           ]
         },
         "outputs": {
