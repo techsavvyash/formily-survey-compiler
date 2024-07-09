@@ -1,5 +1,3 @@
-// const fs = require('fs');
-
 // START NODE
 const startNode = {
         "id": "start",
@@ -222,6 +220,11 @@ class Flowise {
 
     // If last field, then return the msg
     code += FlowiseCode.msg_end;
+
+    const xMessage = [`start.data.instance`];
+    for(let i=0; i<index; i++){
+      xMessage.push(`USER_FEEDBACK_LOOP_FIELD_${i}.data.instance`);
+    }
     
     const node = {
       "id": `CODE_RUNNER_${id}`,
@@ -232,9 +235,7 @@ class Flowise {
         "label": "Code Runner Transformer",
         "inputs": {
           "code": code,
-          "xmessage": [
-            index != 0 ? `USER_FEEDBACK_LOOP_FIELD${index-1}.data.instance` : `start.data.instance`
-          ]
+          "xmessage": xMessage
         },
         "outputs": {
           "onError": "",
@@ -305,6 +306,10 @@ class Flowise {
   }
 
   userFeedbackLoopNode(field, id, index){
+    const xMessage = [];
+    for(let i=0; i<=index; i++){
+      xMessage.push(`CODE_RUNNER_FIELD_${i}.data.instance`);
+    }
     const node = {
       "id": `USER_FEEDBACK_LOOP_${id}`,
       "data": {
@@ -313,7 +318,7 @@ class Flowise {
         "type": "Output",
         "label": "User Feedback Loop",
         "inputs": {
-          "xmessage": [`CODE_RUNNER_${id}.data.instance`]
+          "xmessage": xMessage
         },
         "outputs": {
           "restoreState": "",
@@ -339,12 +344,12 @@ class Flowise {
             "list": true,
             "name": "xmessage",
             "type": "xMessage",
-            "label": "xMessage"
+            "label": "XMessage"
           }
         ],
         "outputAnchors": [
           {
-            "id": `USER_FEEDBACK_LOOP_FIELD${index}-output-restoredState-xMessage`,
+            "id": `USER_FEEDBACK_LOOP_${id}-output-restoreState-xMessage`,
             "name": "restoreState",
             "type": "xMessage",
             "label": "Restore State"
