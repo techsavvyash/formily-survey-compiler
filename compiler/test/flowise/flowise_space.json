@@ -474,7 +474,7 @@
         "type": "Output",
         "label": "Code Runner Transformer",
         "inputs": {
-          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData.formInputs[\"FavouriteSport\"] = msg.payload.text;\nmsg.payload.text = \"undefined\";\nreturn JSON.stringify(msg);",
+          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData.formInputs[\"FavouriteSport\"] = msg.payload.text;\nmsg.payload.text = \"What is your Fathers name?\";\nreturn JSON.stringify(msg);",
           "xmessage": [
             "USER_FEEDBACK_LOOP_FIELD2.data.instance"
           ]
