@@ -192,7 +192,7 @@
         "type": "Output",
         "label": "Code Runner Transformer",
         "inputs": {
-          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData.formInputs[\"Class\"] = msg.payload.text;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
+          "code": "const msg = JSON.parse($0);\nmsg.transformer.metaData[\"formInputs\"][\"Class\"] = msg.payload.text;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
           "xmessage": [
             "start.data.instance",
             "USER_FEEDBACK_LOOP_FIELD_0.data.instance"
