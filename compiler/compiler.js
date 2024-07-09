@@ -116,6 +116,7 @@ class FieldParsers {
             key: option['value'],
             text: option['label'],
             isEnabled: true,
+            showTextInput: true
           })
         }),
     }
