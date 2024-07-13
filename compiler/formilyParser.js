@@ -20,6 +20,7 @@ class FieldParsers {
         title,
         component: "Select",
         description: fieldDetail['description'] || "Description not provided",
+        validation: "none",
         options: fieldDetail['enum'].map((option, index) => {
             return ({
               key: option['value'].replace(/\s/g, ''), // mustn't have spaces
@@ -58,6 +59,7 @@ const parseFormilyInputFieldDetails = (fieldDetail) => {
         title: "Error",
         component: "Error",
         description: "Component not found",
+        validation: "none",
     }
   
   }

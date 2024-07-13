@@ -297,6 +297,17 @@
       "target": "CODE_RUNNER_END_1",
       "sourceHandle": "USER_FEEDBACK_LOOP_FIELD_0-output-restoreState-xMessage",
       "targetHandle": "CODE_RUNNER_END_1-input-xmessage-xMessage"
+    },
+    {
+      "id": "CODE_RUNNER_END_1-CODE_RUNNER_FIELD_0",
+      "data": {
+        "label": ""
+      },
+      "type": "buttonedge",
+      "source": "CODE_RUNNER_END_1",
+      "target": "CODE_RUNNER_FIELD_0",
+      "sourceHandle": "CODE_RUNNER_END_1-output-onError-xMessage",
+      "targetHandle": "CODE_RUNNER_FIELD_0-input-xmessage-xMessage"
     }
   ],
   "viewport": {

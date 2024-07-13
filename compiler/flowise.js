@@ -12,16 +12,21 @@ class FlowiseCode{
     }
   
     // GET INPUT CODE
-    static GetInput(title){
-      const s1 =  `let formInput = msg.transformer.metaData.formInput;\n`;
-      const s2 = `if(formInput){\n`;
-      const s3 = `formInput = {...formInput, \"${title}\": msg.payload.text};\n`;
-      const s4 = `} else {\n`;
-      const s5 = `formInput = {\"${title}\": msg.payload.text};\n`;
-      const s6 = `}\n`;
-      const s7 = `msg.transformer.metaData.formInput = formInput;\n`;
-  
-      return s1 + s2 + s3 + s4 + s5 + s6 + s7;
+    static GetInput(title, validation){
+        let validationCode = "";
+        if(validation != "none"){
+            validationCode = `if(!msg.payload.text.match(${validation})) throw new error('Wrong input');\n`;
+        }
+
+        const s1 =  `let formInput = msg.transformer.metaData.formInput;\n`;
+        const s2 = `if(formInput){\n`;
+        const s3 = `formInput = {...formInput, \"${title}\": msg.payload.text};\n`;
+        const s4 = `} else {\n`;
+        const s5 = `formInput = {\"${title}\": msg.payload.text};\n`;
+        const s6 = `}\n`;
+        const s7 = `msg.transformer.metaData.formInput = formInput;\n`;
+        
+        return validationCode+s1 + s2 + s3 + s4 + s5 + s6 + s7;
     }
   
     // INPUT FIELD CODE
@@ -81,25 +86,34 @@ class Flowise {
   
         // Create Edge
         const prevNode = this.nodes.slice(-1)[0];
+        const prevCodeRunnerNode = this.nodes.length > 1 ? this.nodes.slice(-2)[0] : null;
         const edgeIn = this.createEdge(prevNode, codeRunnerNODE);
-  
+        
         // Push to nodes and edges connecting previous node to current node
         this.nodes.push(codeRunnerNODE);
         this.edges.push(edgeIn);
+        if(prevCodeRunnerNode){
+            const edgeOut = this.createEdge(codeRunnerNODE, prevCodeRunnerNode, true);
+            this.edges.push(edgeOut);
+        }
   
         // Create User Feedback Loop Node
         const userFeedbackLoopNODE = this.userFeedbackLoopNode(field, id, index);
   
         // Create Edge
-        const edgeOut = this.createEdge(codeRunnerNODE, userFeedbackLoopNODE);
+        const successEdge = this.createEdge(codeRunnerNODE, userFeedbackLoopNODE);
+        // no error edge for user feedback loop node
+        // const errorEdge = this.createEdge(codeRunnerNODE, userFeedbackLoopNODE, true);
   
         // Push to nodes and edges connecting current node to user feedback loop node
         this.nodes.push(userFeedbackLoopNODE);
-        this.edges.push(edgeOut);
+        this.edges.push(successEdge);
+        // this.edges.push(errorEdge);
       });
   
       // Create Last Node
       const prevField = fields.slice(-1)[0];
+      const prevCodeRunnerNode = this.nodes.length > 1 ? this.nodes.slice(-2)[0] : null;
       const lastNode = this.codeRunnerNode(prevField,{
         title: "Thank You!",
         description: "Thank You!",
@@ -108,25 +122,25 @@ class Flowise {
   
       // Create Edge
       const prevNode = this.nodes.slice(-1)[0];
-      const edge = this.createEdge(prevNode, lastNode);
+      const edgeIn = this.createEdge(prevNode, lastNode);
   
       // Push to nodes and edges connecting previous node to current node
       this.nodes.push(lastNode);
-      this.edges.push(edge);
+      this.edges.push(edgeIn);
+      if(prevCodeRunnerNode){
+        const errorEdge = this.createEdge(lastNode, prevCodeRunnerNode, true);
+        this.edges.push(errorEdge);
+      }
     }
   
     codeRunnerNode(prevField, field, id, index){
-      // console.log("Prev: ",prevField);
-      // console.log("Field: ",field);
-      // console.log("ID: ",id);
-      // console.log("Index: ",index);
   
       const component = field['component'];
       let code = FlowiseCode.msg_init;
   
       // Take input from previous field and store it in formInputs (if index != 0)
       if(index != 0){
-        code += FlowiseCode.GetInput(prevField['title']);
+        code += FlowiseCode.GetInput(prevField['title'], prevField['validation']);
       }
       // ASK NEXT QUESTION: set payload for the current field (description) handle different components differently
       switch (component) {
@@ -300,9 +314,13 @@ class Flowise {
       return node;
       }
   
-    createEdge(source, target){
-  
-      const Source_OutId = source["data"]["outputAnchors"][0]["id"];
+    createEdge(source, target, error=false){
+        let Source_OutId;
+        if(error && source["data"]["outputAnchors"].length > 1){
+            Source_OutId = source["data"]["outputAnchors"][1]["id"];
+        } else {
+            Source_OutId = source["data"]["outputAnchors"][0]["id"];
+        }
       const Target_InId = target["data"]["inputAnchors"][0]["id"];
   
       const edgeId = `${source.id}-${target.id}`;
