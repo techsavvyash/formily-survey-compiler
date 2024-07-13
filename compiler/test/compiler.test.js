@@ -30,3 +30,8 @@ fs.writeFileSync('./flowise/flowise_mix1.json', JSON.stringify(flowise_mix1, nul
 const formily_space = fs.readFileSync('./formily/formily_space.json');
 const flowise_space = formily_flowise_compiler(JSON.parse(formily_space));
 fs.writeFileSync('./flowise/flowise_space.json', JSON.stringify(flowise_space, null, 2));
+
+// Test Case 7 (Validators)
+const formily_validators = fs.readFileSync('./formily/formily_validators.json');
+const flowise_validators = formily_flowise_compiler(JSON.parse(formily_validators));
+fs.writeFileSync('./flowise/flowise_validators.json', JSON.stringify(flowise_validators, null, 2));
