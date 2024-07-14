@@ -335,7 +335,7 @@
         "type": "Output",
         "label": "Code Runner Transformer",
         "inputs": {
-          "code": "const msg = JSON.parse($0);\nif(!msg.payload.text.match(email)) throw new error('Wrong input');\nlet formInput = msg.transformer.metaData.formInput;\nif(formInput){\nformInput = {...formInput, \"Hello\": msg.payload.text};\n} else {\nformInput = {\"Hello\": msg.payload.text};\n}\nmsg.transformer.metaData.formInput = formInput;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
+          "code": "const msg = JSON.parse($0);\nif(!msg.payload.text.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/)) throw new error('Wrong input');\nlet formInput = msg.transformer.metaData.formInput;\nif(formInput){\nformInput = {...formInput, \"Hello\": msg.payload.text};\n} else {\nformInput = {\"Hello\": msg.payload.text};\n}\nmsg.transformer.metaData.formInput = formInput;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
           "xmessage": [
             "start.data.instance",
             "USER_FEEDBACK_LOOP_FIELD_0.data.instance",

@@ -1,6 +1,8 @@
 // IMPORTS
-const {INPUT_FIELD_TYPES} = require('./types');
+const INPUT_FIELD_TYPES = require('./fieldTypes');
+const { VALIDATION_TYPES, ValidationREGEX } = require('./validations');
 const startNode = require('./startNode.json');
+
 
 class FlowiseCode{
     static msg_init = "const msg = JSON.parse($0);\n";
@@ -15,7 +17,7 @@ class FlowiseCode{
     static GetInput(title, validation){
         let validationCode = "";
         if(validation != "none"){
-            validationCode = `if(!msg.payload.text.match(${validation})) throw new error('Wrong input');\n`;
+            validationCode = `if(!msg.payload.text.match(${ValidationREGEX[`${validation}`]})) throw new error('Wrong input');\n`;
         }
 
         const s1 =  `let formInput = msg.transformer.metaData.formInput;\n`;

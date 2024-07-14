@@ -1,5 +1,5 @@
 // IMPORTS
-const {INPUT_FIELD_TYPES} = require('./types');
+const INPUT_FIELD_TYPES = require('./fieldTypes');
 
 class FieldParsers {
     // INPUT FIELD PARSER
