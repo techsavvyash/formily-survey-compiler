@@ -17,7 +17,7 @@ class FlowiseCode{
     static GetInput(title, validation){
         let validationCode = "";
         if(validation != "none"){
-            validationCode = `if(!msg.payload.text.match(${ValidationREGEX[`${validation}`]})) throw new error('Wrong input');\n`;
+            validationCode = `if(!msg.payload.text.match(${ValidationREGEX[`${validation}`]})) throw new error('Wrong input, Please Retype');\n`;
         }
 
         const s1 =  `let formInput = msg.transformer.metaData.formInput;\n`;
@@ -88,16 +88,23 @@ class Flowise {
   
         // Create Edge
         const prevNode = this.nodes.slice(-1)[0];
-        const prevCodeRunnerNode = this.nodes.length > 1 ? this.nodes.slice(-2)[0] : null;
+        // const prevCodeRunnerNode = this.nodes.length > 1 ? this.nodes.slice(-2)[0] : null;
         const edgeIn = this.createEdge(prevNode, codeRunnerNODE);
+        let edgeError = null;
+        if(prevNode["id"] != "start"){
+          edgeError = this.createEdge(codeRunnerNODE, prevNode, true);
+        }
         
         // Push to nodes and edges connecting previous node to current node
         this.nodes.push(codeRunnerNODE);
         this.edges.push(edgeIn);
-        if(prevCodeRunnerNode){
-            const edgeOut = this.createEdge(codeRunnerNODE, prevCodeRunnerNode, true);
-            this.edges.push(edgeOut);
+        if(edgeError){
+          this.edges.push(edgeError);
         }
+        // if(prevCodeRunnerNode){
+        //     const edgeOut = this.createEdge(codeRunnerNODE, prevCodeRunnerNode, true);
+        //     this.edges.push(edgeOut);
+        // }
   
         // Create User Feedback Loop Node
         const userFeedbackLoopNODE = this.userFeedbackLoopNode(field, id, index);
@@ -115,7 +122,7 @@ class Flowise {
   
       // Create Last Node
       const prevField = fields.slice(-1)[0];
-      const prevCodeRunnerNode = this.nodes.length > 1 ? this.nodes.slice(-2)[0] : null;
+      // const prevCodeRunnerNode = this.nodes.length > 1 ? this.nodes.slice(-2)[0] : null;
       const lastNode = this.codeRunnerNode(prevField,{
         title: "Thank You!",
         description: "Thank You!",
@@ -125,14 +132,16 @@ class Flowise {
       // Create Edge
       const prevNode = this.nodes.slice(-1)[0];
       const edgeIn = this.createEdge(prevNode, lastNode);
+      const edgeError = this.createEdge(lastNode, prevNode, true);
   
       // Push to nodes and edges connecting previous node to current node
       this.nodes.push(lastNode);
       this.edges.push(edgeIn);
-      if(prevCodeRunnerNode){
-        const errorEdge = this.createEdge(lastNode, prevCodeRunnerNode, true);
-        this.edges.push(errorEdge);
-      }
+      this.edges.push(edgeError);
+      // if(prevCodeRunnerNode){
+      //   const errorEdge = this.createEdge(lastNode, prevCodeRunnerNode, true);
+      //   this.edges.push(errorEdge);
+      // }
     }
   
     codeRunnerNode(prevField, field, id, index){

@@ -335,7 +335,7 @@
         "type": "Output",
         "label": "Code Runner Transformer",
         "inputs": {
-          "code": "const msg = JSON.parse($0);\nif(!msg.payload.text.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/)) throw new error('Wrong input');\nlet formInput = msg.transformer.metaData.formInput;\nif(formInput){\nformInput = {...formInput, \"Hello\": msg.payload.text};\n} else {\nformInput = {\"Hello\": msg.payload.text};\n}\nmsg.transformer.metaData.formInput = formInput;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
+          "code": "const msg = JSON.parse($0);\nif(!msg.payload.text.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/)) throw new error('Wrong input, Please Retype');\nlet formInput = msg.transformer.metaData.formInput;\nif(formInput){\nformInput = {...formInput, \"Hello\": msg.payload.text};\n} else {\nformInput = {\"Hello\": msg.payload.text};\n}\nmsg.transformer.metaData.formInput = formInput;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
           "xmessage": [
             "start.data.instance",
             "USER_FEEDBACK_LOOP_FIELD_0.data.instance",
@@ -443,15 +443,15 @@
       "targetHandle": "CODE_RUNNER_FIELD_1-input-xmessage-xMessage"
     },
     {
-      "id": "CODE_RUNNER_FIELD_1-CODE_RUNNER_FIELD_0",
+      "id": "CODE_RUNNER_FIELD_1-USER_FEEDBACK_LOOP_FIELD_0",
       "data": {
         "label": ""
       },
       "type": "buttonedge",
       "source": "CODE_RUNNER_FIELD_1",
-      "target": "CODE_RUNNER_FIELD_0",
+      "target": "USER_FEEDBACK_LOOP_FIELD_0",
       "sourceHandle": "CODE_RUNNER_FIELD_1-output-onError-xMessage",
-      "targetHandle": "CODE_RUNNER_FIELD_0-input-xmessage-xMessage"
+      "targetHandle": "USER_FEEDBACK_LOOP_FIELD_0-input-xmessage-xMessage"
     },
     {
       "id": "CODE_RUNNER_FIELD_1-USER_FEEDBACK_LOOP_FIELD_1",
@@ -476,15 +476,15 @@
       "targetHandle": "CODE_RUNNER_END_2-input-xmessage-xMessage"
     },
     {
-      "id": "CODE_RUNNER_END_2-CODE_RUNNER_FIELD_1",
+      "id": "CODE_RUNNER_END_2-USER_FEEDBACK_LOOP_FIELD_1",
       "data": {
         "label": ""
       },
       "type": "buttonedge",
       "source": "CODE_RUNNER_END_2",
-      "target": "CODE_RUNNER_FIELD_1",
+      "target": "USER_FEEDBACK_LOOP_FIELD_1",
       "sourceHandle": "CODE_RUNNER_END_2-output-onError-xMessage",
-      "targetHandle": "CODE_RUNNER_FIELD_1-input-xmessage-xMessage"
+      "targetHandle": "USER_FEEDBACK_LOOP_FIELD_1-input-xmessage-xMessage"
     }
   ],
   "viewport": {
