@@ -1,6 +1,6 @@
 // IMPORTS
 const INPUT_FIELD_TYPES = require('./fieldTypes');
-const { VALIDATION_TYPES, ValidationREGEX } = require('./validations');
+const { ValidationREGEX } = require('./validations');
 const startNode = require('./startNode.json');
 
 
@@ -76,7 +76,6 @@ class Flowise {
     createGraph() {
       // Start Node was already created
       const fields = this.fields;
-      // console.log("All Fields: ", fields);
   
       // Create Code Runner and User Feedback Loop Nodes for each field
       fields.forEach((field, index) => {
@@ -101,10 +100,6 @@ class Flowise {
         if(edgeError){
           this.edges.push(edgeError);
         }
-        // if(prevCodeRunnerNode){
-        //     const edgeOut = this.createEdge(codeRunnerNODE, prevCodeRunnerNode, true);
-        //     this.edges.push(edgeOut);
-        // }
   
         // Create User Feedback Loop Node
         const userFeedbackLoopNODE = this.userFeedbackLoopNode(field, id, index);
