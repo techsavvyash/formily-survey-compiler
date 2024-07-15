@@ -1,6 +1,8 @@
 // IMPORTS
+const fs = require('fs');
+const path = require('path');
+
 const INPUT_FIELD_TYPES = require('./fieldTypes');
-const { ValidationREGEX } = require('./validations');
 const startNode = require('./startNode.json');
 
 // TODO: 
@@ -19,9 +21,21 @@ class FlowiseCode{
     // GET INPUT CODE
     static GetInput(title, validation){
         let validationCode = "";
-        if(validation !== "none"){
-            validationCode = `if(!msg.payload.text.match(${ValidationREGEX[`${validation}`]})) throw new error('Wrong input, Please Retype');\n`;
-        }
+        if (validation !== "none") {
+          const validationPath = path.resolve(__dirname, 'validations.js');
+          console.log('Resolved validation file path:', validationPath);
+
+          const cwd = process.cwd();
+          console.log('Current working directory:', cwd);
+
+          try {
+              const validationFile = fs.readFileSync(validationPath, 'utf8');
+              validationCode = validationFile + `if(!validator["${validation}"](msg.payload.text)) throw new Error('Wrong input, Please Retype');\n`;
+          } catch (err) {
+              console.error('Error reading validation file:', err);
+              throw err;
+          }
+      }
 
         const s1 =  `let formInput = msg.transformer.metaData.formInput;\n`;
         const s2 = `if(formInput){\n`;

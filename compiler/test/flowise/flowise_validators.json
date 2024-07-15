@@ -335,7 +335,7 @@
         "type": "Output",
         "label": "Code Runner Transformer",
         "inputs": {
-          "code": "const msg = JSON.parse($0);\nif(!msg.payload.text.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/)) throw new error('Wrong input, Please Retype');\nlet formInput = msg.transformer.metaData.formInput;\nif(formInput){\nformInput = {...formInput, \"Hello\": msg.payload.text};\n} else {\nformInput = {\"Hello\": msg.payload.text};\n}\nmsg.transformer.metaData.formInput = formInput;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
+          "code": "const msg = JSON.parse($0);\nfunction emailValidator(data, test){\r\n    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/;\r\n    return emailRegex.test(data);\r\n}\r\n\r\nfunction urlValidator(data, test){\r\n    const urlRegex = /^(http|https):\\/\\/[^ \"]+$/;\r\n    return urlRegex.test(data);\r\n}\r\n\r\nfunction numberValidator(data, test){\r\n    const numberRegex = /^\\d+$/;\r\n    return numberRegex.test(data);\r\n}\r\n\r\nfunction dateValidator(data, test){\r\n    const dateRegex = /^\\d{4}-\\d{2}-\\d{2}$/;\r\n    return dateRegex.test(data);\r\n}\r\n\r\nconst validator = {\r\n    \"url\": urlValidator,\r\n    \"email\": emailValidator,\r\n    \"date\": dateValidator,\r\n    \"number\": numberValidator,\r\n}\r\n\r\nif(!validator[\"number\"](msg.payload.text)) throw new Error('Wrong input, Please Retype');\nlet formInput = msg.transformer.metaData.formInput;\nif(formInput){\nformInput = {...formInput, \"Hello\": msg.payload.text};\n} else {\nformInput = {\"Hello\": msg.payload.text};\n}\nmsg.transformer.metaData.formInput = formInput;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
           "xmessage": [
             "USER_FEEDBACK_LOOP_FIELD_1.data.instance"
           ]
@@ -504,7 +504,7 @@
           "xmessage": [
             "CODE_RUNNER_END_2.data.instance"
           ],
-          "code": "const msg = JSON.parse($0);\nmsg.payload.text = \"Wrong input, Please input a email\";\nreturn JSON.stringify(msg);"
+          "code": "const msg = JSON.parse($0);\nmsg.payload.text = \"Wrong input, Please input a number\";\nreturn JSON.stringify(msg);"
         },
         "outputs": {
           "onError": "",
