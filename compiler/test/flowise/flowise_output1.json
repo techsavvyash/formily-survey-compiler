@@ -130,7 +130,8 @@
         "label": "User Feedback Loop",
         "inputs": {
           "xmessage": [
-            "CODE_RUNNER_FIELD_0.data.instance"
+            "CODE_RUNNER_FIELD_0.data.instance",
+            "CODE_RUNNER_VALIDATION_0.data.instance"
           ]
         },
         "outputs": {
@@ -194,7 +195,6 @@
         "inputs": {
           "code": "const msg = JSON.parse($0);\nlet formInput = msg.transformer.metaData.formInput;\nif(formInput){\nformInput = {...formInput, \"Hello\": msg.payload.text};\n} else {\nformInput = {\"Hello\": msg.payload.text};\n}\nmsg.transformer.metaData.formInput = formInput;\nmsg.payload.text = \"Thank You!\";\nreturn JSON.stringify(msg);",
           "xmessage": [
-            "start.data.instance",
             "USER_FEEDBACK_LOOP_FIELD_0.data.instance"
           ]
         },
@@ -262,6 +262,84 @@
         "y": -141.0959960862705
       },
       "style": {}
+    },
+    {
+      "id": "CODE_RUNNER_VALIDATION_0",
+      "position": {
+        "x": 3255.789032183661,
+        "y": -141.0959960862705
+      },
+      "type": "customNode",
+      "data": {
+        "id": "CODE_RUNNER_VALIDATION_0",
+        "label": "Code Runner Transformer",
+        "name": "CODE_RUNNER",
+        "type": "Output",
+        "category": "GenericTransformer",
+        "description": "A code runner capable of running custom JS code.",
+        "baseClasses": [
+          "xMessage"
+        ],
+        "inputs": {
+          "xmessage": [
+            "CODE_RUNNER_END_1.data.instance"
+          ],
+          "code": "const msg = JSON.parse($0);\nmsg.payload.text = \"Wrong input, Please input a none\";\nreturn JSON.stringify(msg);"
+        },
+        "outputs": {
+          "onError": "",
+          "onSuccess": ""
+        },
+        "selected": false,
+        "inputAnchors": [
+          {
+            "id": "CODE_RUNNER_VALIDATION_0-input-xmessage-xMessage",
+            "list": true,
+            "name": "xmessage",
+            "type": "xMessage",
+            "label": "XMessage"
+          }
+        ],
+        "inputParams": [
+          {
+            "label": "Code",
+            "name": "code",
+            "type": "ide",
+            "rows": 2,
+            "id": "CODE_RUNNER_VALIDATION_0-input-code-ide"
+          },
+          {
+            "id": "CODE_RUNNER_VALIDATION_0-input-sideEffects-json",
+            "label": "SideEffects",
+            "name": "sideEffects",
+            "rows": 2,
+            "type": "json"
+          }
+        ],
+        "outputAnchors": [
+          {
+            "id": "CODE_RUNNER_VALIDATION_0-output-onSuccess-xMessage",
+            "name": "onSuccess",
+            "label": "On Success",
+            "type": "xMessage"
+          },
+          {
+            "id": "CODE_RUNNER_VALIDATION_0-output-onError-xMessage",
+            "name": "onError",
+            "label": "On Error",
+            "type": "xMessage"
+          }
+        ]
+      },
+      "width": 300,
+      "height": 569,
+      "selected": false,
+      "dragging": false,
+      "positionAbsolute": {
+        "x": 3255.789032183661,
+        "y": -141.0959960862705
+      },
+      "style": {}
     }
   ],
   "edges": [
@@ -299,14 +377,25 @@
       "targetHandle": "CODE_RUNNER_END_1-input-xmessage-xMessage"
     },
     {
-      "id": "CODE_RUNNER_END_1-USER_FEEDBACK_LOOP_FIELD_0",
+      "id": "CODE_RUNNER_END_1-CODE_RUNNER_VALIDATION_0",
       "data": {
         "label": ""
       },
       "type": "buttonedge",
       "source": "CODE_RUNNER_END_1",
-      "target": "USER_FEEDBACK_LOOP_FIELD_0",
+      "target": "CODE_RUNNER_VALIDATION_0",
       "sourceHandle": "CODE_RUNNER_END_1-output-onError-xMessage",
+      "targetHandle": "CODE_RUNNER_VALIDATION_0-input-xmessage-xMessage"
+    },
+    {
+      "id": "CODE_RUNNER_VALIDATION_0-USER_FEEDBACK_LOOP_FIELD_0",
+      "data": {
+        "label": ""
+      },
+      "type": "buttonedge",
+      "source": "CODE_RUNNER_VALIDATION_0",
+      "target": "USER_FEEDBACK_LOOP_FIELD_0",
+      "sourceHandle": "CODE_RUNNER_VALIDATION_0-output-onSuccess-xMessage",
       "targetHandle": "USER_FEEDBACK_LOOP_FIELD_0-input-xmessage-xMessage"
     }
   ],

@@ -3,6 +3,9 @@ const INPUT_FIELD_TYPES = require('./fieldTypes');
 const { ValidationREGEX } = require('./validations');
 const startNode = require('./startNode.json');
 
+// TODO: 
+// XMessage: Function needs to be created 
+
 
 class FlowiseCode{
     static msg_init = "const msg = JSON.parse($0);\n";
@@ -16,7 +19,7 @@ class FlowiseCode{
     // GET INPUT CODE
     static GetInput(title, validation){
         let validationCode = "";
-        if(validation != "none"){
+        if(validation !== "none"){
             validationCode = `if(!msg.payload.text.match(${ValidationREGEX[`${validation}`]})) throw new error('Wrong input, Please Retype');\n`;
         }
 
@@ -74,71 +77,192 @@ class Flowise {
     }
   
     createGraph() {
-      // Start Node was already created
+      // this.nodes = [startNode]; // Start Node is already present
+
+      // Get the fields array (parsed formily fields)
       const fields = this.fields;
   
       // Create Code Runner and User Feedback Loop Nodes for each field
       fields.forEach((field, index) => {
+
+        // Creating an unique id for each node
         const id = `FIELD_${index}`;
-        const prevField = index != 0 ? fields[index-1] : null;
-  
-        // Create Code Runner Node
-        const codeRunnerNODE = this.codeRunnerNode(prevField, field, id, index);
-  
-        // Create Edge
-        const prevNode = this.nodes.slice(-1)[0];
-        // const prevCodeRunnerNode = this.nodes.length > 1 ? this.nodes.slice(-2)[0] : null;
-        const edgeIn = this.createEdge(prevNode, codeRunnerNODE);
-        let edgeError = null;
-        if(prevNode["id"] != "start"){
-          edgeError = this.createEdge(codeRunnerNODE, prevNode, true);
+
+        // Get Previous node for creating edge
+        const prevNode = index == 0 ? startNode : this.nodes[this.nodes.length-1];
+
+        // Get previous field for creating Code Runner Node
+        let prevField = null;
+        if(index != 0){
+          prevField = fields[index-1];
         }
-        
-        // Push to nodes and edges connecting previous node to current node
-        this.nodes.push(codeRunnerNODE);
-        this.edges.push(edgeIn);
-        if(edgeError){
-          this.edges.push(edgeError);
-        }
-  
-        // Create User Feedback Loop Node
-        const userFeedbackLoopNODE = this.userFeedbackLoopNode(field, id, index);
-  
-        // Create Edge
-        const successEdge = this.createEdge(codeRunnerNODE, userFeedbackLoopNODE);
-        // no error edge for user feedback loop node
-        // const errorEdge = this.createEdge(codeRunnerNODE, userFeedbackLoopNODE, true);
-  
-        // Push to nodes and edges connecting current node to user feedback loop node
-        this.nodes.push(userFeedbackLoopNODE);
-        this.edges.push(successEdge);
-        // this.edges.push(errorEdge);
+
+        // Creating the Code Runner Node
+        const C_R_Node = this.codeRunnerNode(prevField, field, id, index);
+        // Creating the User Feedback Loop Node
+        const U_F_Node = this.userFeedbackLoopNode(id);
+
+        // Pushing nodes into the nodes array
+        this.nodes.push(C_R_Node);
+        this.nodes.push(U_F_Node);
+
+        // Creating edges
+        const inEdge = this.createEdge(prevNode, C_R_Node);
+        const outEdge = this.createEdge(C_R_Node, U_F_Node);
+
+        // Pushing edges into the edges array
+        this.edges.push(inEdge);
+        this.edges.push(outEdge);
       });
   
       // Create Last Node
-      const prevField = fields.slice(-1)[0];
-      // const prevCodeRunnerNode = this.nodes.length > 1 ? this.nodes.slice(-2)[0] : null;
-      const lastNode = this.codeRunnerNode(prevField,{
+
+      // Get Previous node for creating edge (User Feedback Loop Node)
+      const prevNode = this.nodes.slice(-1)[0];
+      // Last field in the fields array
+      const lastField = fields.slice(-1)[0];
+      // Creating the Last Node
+      const lastNode = this.codeRunnerNode(lastField,{
         title: "Thank You!",
         description: "Thank You!",
-        component: "END"
+        component: "END",
+        validation: "none",
       }, `END_${fields.length}`, fields.length);
-  
-      // Create Edge
-      const prevNode = this.nodes.slice(-1)[0];
-      const edgeIn = this.createEdge(prevNode, lastNode);
-      const edgeError = this.createEdge(lastNode, prevNode, true);
-  
-      // Push to nodes and edges connecting previous node to current node
+
+      // Pushing the last node into the nodes array
       this.nodes.push(lastNode);
-      this.edges.push(edgeIn);
-      this.edges.push(edgeError);
-      // if(prevCodeRunnerNode){
-      //   const errorEdge = this.createEdge(lastNode, prevCodeRunnerNode, true);
-      //   this.edges.push(errorEdge);
-      // }
+
+      // Creating the edge for the last node
+      const edge = this.createEdge(prevNode, lastNode);
+
+      // Pushing the edge into the edges array
+      this.edges.push(edge);
+
+      // Adding Validation Code_Runner Nodes
+      this.addValidationNodes();
     }
-  
+
+    // ADD VALIDATION NODES
+    addValidationNodes(){
+      // Get All Fields (as number of fields = number of User Feedback Loop Nodes = number of Code Runner Validation Nodes)
+      const fields = this.fields;
+
+      // For each field
+      fields.forEach((field, index) => {
+        
+        // Creating an unique id for each node
+        const id = `VALIDATION_${index}`;
+
+        // Get Code Runner Node belonging to the next field
+        const nextCRNodeIndex = (index+1)*2 + 1; // index = 0 => nextCRNodeIndex = 3 (bcoz 0th index is startNode)
+        const nextCRNode = this.nodes[nextCRNodeIndex];
+
+        // Get User Feedback Loop Node belonging to the current field
+        const U_F_Node = this.nodes[nextCRNodeIndex - 1];
+
+        // Creating the Code Runner Validation Node
+        const inputXMessage = [`${nextCRNode["id"]}.data.instance`];
+        const C_R_VNode = this.codeRunnerValidationNode(id, field, inputXMessage);
+
+        // Pushing nodes into the nodes array
+        this.nodes.push(C_R_VNode);
+
+        // Updating the User Feedback Loop Node input XMessage
+        this.nodes[nextCRNodeIndex - 1]["data"]["inputs"]["xmessage"].push(`${C_R_VNode["id"]}.data.instance`);
+
+        // Creating edges
+        const inEdge = this.createEdge(nextCRNode, C_R_VNode, true);
+        const outEdge = this.createEdge(C_R_VNode, U_F_Node);
+
+        // Pushing edges into the edges array
+        this.edges.push(inEdge);
+        this.edges.push(outEdge);
+      });
+    }
+
+    // CODE RUNNER VALIDATION NODE Creator
+    codeRunnerValidationNode(id, field, xMessage){
+      const node = {
+        "id": `CODE_RUNNER_${id}`,
+        "position": {
+          "x": 3255.789032183661,
+          "y": -141.0959960862705
+        },
+        "type": "customNode",
+        "data": {
+          "id": `CODE_RUNNER_${id}`,
+          "label": "Code Runner Transformer",
+          "name": "CODE_RUNNER",
+          "type": "Output",
+          "category": "GenericTransformer",
+          "description": "A code runner capable of running custom JS code.",
+          "baseClasses": [
+            "xMessage"
+          ],
+          "inputs": {
+            "xmessage": xMessage,
+            "code": `const msg = JSON.parse($0);\nmsg.payload.text = \"Wrong input, Please input a ${field['validation']}\";\nreturn JSON.stringify(msg);`
+          },
+          "outputs": {
+            "onError": "",
+            "onSuccess": ""
+          },
+          "selected": false,
+
+          "inputAnchors": [
+            {
+              "id": `CODE_RUNNER_${id}-input-xmessage-xMessage`,
+              "list": true,
+              "name": "xmessage",
+              "type": "xMessage",
+              "label": "XMessage"
+            }
+          ],
+          "inputParams": [
+            {
+              "label": "Code",
+              "name": "code",
+              "type": "ide",
+              "rows": 2,
+              "id": `CODE_RUNNER_${id}-input-code-ide`
+            },
+            {
+              "id": `CODE_RUNNER_${id}-input-sideEffects-json`,
+              "label": "SideEffects",
+              "name": "sideEffects",
+              "rows": 2,
+              "type": "json"
+            }
+          ],
+          "outputAnchors": [
+            {
+              "id": `CODE_RUNNER_${id}-output-onSuccess-xMessage`,
+              "name": "onSuccess",
+              "label": "On Success",
+              "type": "xMessage"
+            },
+            {
+              "id": `CODE_RUNNER_${id}-output-onError-xMessage`,
+              "name": "onError",
+              "label": "On Error",
+              "type": "xMessage"
+            }
+          ],
+        },
+        "width": 300,
+        "height": 569,
+        "selected": false,
+        "dragging": false,
+        "positionAbsolute": {
+          "x": 3255.789032183661,
+          "y": -141.0959960862705
+        },
+        "style": {}
+      }
+      return node;
+    }
+
+    // CODE RUNNER NODE Creator
     codeRunnerNode(prevField, field, id, index){
   
       const component = field['component'];
@@ -167,9 +291,12 @@ class Flowise {
       // If last field, then return the msg
       code += FlowiseCode.msg_end;
   
-      const xMessage = [`start.data.instance`];
-      for(let i=0; i<index; i++){
-        xMessage.push(`USER_FEEDBACK_LOOP_FIELD_${i}.data.instance`);
+      // Create xMessage: input from previous edge
+      const xMessage = [];
+      if(index != 0){
+        xMessage.push(`USER_FEEDBACK_LOOP_FIELD_${index-1}.data.instance`);
+      }else{
+        xMessage.push("start.data.instance");
       }
       
       const node = {
@@ -251,11 +378,11 @@ class Flowise {
       return node;
     }
   
-    userFeedbackLoopNode(field, id, index){
+    // USER FEEDBACK LOOP NODE Creator
+    userFeedbackLoopNode(id){
       const xMessage = [];
-      for(let i=0; i<=index; i++){
-        xMessage.push(`CODE_RUNNER_FIELD_${i}.data.instance`);
-      }
+      xMessage.push(`CODE_RUNNER_${id}.data.instance`);
+
       const node = {
         "id": `USER_FEEDBACK_LOOP_${id}`,
         "data": {
@@ -319,7 +446,8 @@ class Flowise {
       };
       return node;
       }
-  
+    
+    // EDGE Creator
     createEdge(source, target, error=false){
         let Source_OutId;
         if(error && source["data"]["outputAnchors"].length > 1){
